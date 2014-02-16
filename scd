@@ -9,13 +9,13 @@
 // these are the CONSTANTS for the FrameWork functions
 var fwCONSTANTS = {
     COMMANDSEPERATOR : " ",
-    GMIDS : ["0123"],
+    GMIDS : ["all"],
     scdSCRIPTCOMMAND : "!!"
 };
 
 // these are the Globals for the FrameWork functions
 var fwGlobal = {
-	logToConsoleOn : true
+	logToConsoleOn : false
 };
 
 function fwLtC(logMsg){
@@ -29,7 +29,7 @@ function fwIsGM(playerid) {
 	var d20userid = player.get('_d20userid');
 	var test = false;
 	
-	if (fwCONSTANTS.GMIDS.indexOf(d20userid) >= 0) {
+	if (fwCONSTANTS.GMIDS.indexOf(d20userid) >= 0 || fwCONSTANTS.GMIDS.indexOf("all") >= 0) {
 		test = true;
 	}
 	fwLtC("Is GM: " + test);
@@ -66,9 +66,9 @@ var processScriptTabs = function(msg) {
 	fwLtC("Chat Command: " + chatCommand);
     switch(script) {
     	case fwCONSTANTS.scdSCRIPTCOMMAND:
-//			if (fwIsGM(msg.playerid) === true) {
+			if (fwIsGM(msg.playerid) === true) {
 				processSimpleCriticalDice(chatCommand, msg);
-//			}
+			}
 			break;
     }
 };
@@ -98,8 +98,12 @@ var scdCONSTANTS = {
 		B : ["Parry", "Gaping Wound", "Pressure Point", "Opportunity", "Knockout", "Eviscerate"],
 		BEFFECT : ["You gain a bonus to all Defenses until end of your next turn equal to +2H/+3P/+4E", "Your attack deals Ongoing Damage: 5 + 1/2 your level", "Your target is Weakened (save ends)", "You may take an extra Standard Action this turn", "Your target is Unconscious (save or damage ends)", "Maximize all extra Critical damage for the attack, then deal extra damage equal to +3d6 H/+3d8 P/+3d10 E"]
 	},
-	COLWIDTH : "200px"
-
+	COLWIDTH : "250px",
+	HEADERCOLOR : "#FF9999",
+	EFFECTCOLOR : "#66C2FF",
+	EFFECTDESCCOLOR : "#B2F0B2"
+// Colours are in Hex values, please go here to help find a colour you wish to use.
+// http://www.w3schools.com/tags/ref_colorpicker.asp
 };
 
 var scdGlobal = {
@@ -137,11 +141,11 @@ function processSimpleCriticalDice(chatCommand, msg){
 				break;
 		}
 
-		var htmlHeader = '<table style="border:none"><tr><th style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:#e74c3c;text-align:center">' + CritType + '</th></tr>'
+		var htmlHeader = '<table style="border:none"><tr><th style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:' + scdCONSTANTS.HEADERCOLOR + '";text-align:center">' + CritType + '</th></tr>'
 
-		var htmlEffect = '<tr><td style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:#3498db;text-align:center">' + TextLookup + '</td></tr>'
+		var htmlEffect = '<tr><td style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:' + scdCONSTANTS.EFFECTCOLOR + ';text-align:center">' + TextLookup + '</td></tr>'
 
-		var htmlEffectDesc = '<tr><td style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:#2ecc71">' + TextLookupEffect + '</td></tr></table>'
+		var htmlEffectDesc = '<tr><td style="font-weight:bold;padding:0px 5px;border-style:solid;border-width:0px;width: ' + scdCONSTANTS.COLWIDTH + ';background-color:' + scdCONSTANTS.EFFECTDESCCOLOR + '">' + TextLookupEffect + '</td></tr></table>'
 		
 		sendChat(msg.who, htmlHeader + htmlEffect + htmlEffectDesc);
 }
